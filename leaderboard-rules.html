@@ -3,6 +3,25 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<script>
+/* «Side for datamaskiner» på en berøringstelefon: Chrome ser bort fra meta viewport og legger siden ut 980 px bred, så den ser ut som på en PC, bare liten.
+   Her skaleres siden opp til skjermbredden (CSS-zoom), så telefonutgaven vises. Faktoren står i --kz og i window.kubeloZoom (1 uten skalering): vw, vh og mål fra skript må deles på den.
+   Terskelen 1,15: i PC-modus på en telefon er forholdet over 2. Under 1,15 er forskjellen så liten at skalering bare gir støy (nettbrett, smale vinduer). PC-er har fin peker og røres ikke.
+   Appen under /play/ har ikke denne biten: testerne bruker den fra Play-butikken, og der finnes ikke PC-modus. */
+(function () {
+  var d = document.documentElement, T = 1.15, k = window.kubeloZoom = 1;
+  function fit() {
+    var w = d.clientWidth, s = screen.width, n = matchMedia('(pointer: coarse)').matches && s > 0 && w > s * T ? w / s : 1;
+    if (n === k) return;
+    window.kubeloZoom = k = n;
+    if (n > 1) { d.style.zoom = n; d.style.setProperty('--kz', n); }
+    else { d.style.removeProperty('zoom'); d.style.removeProperty('--kz'); }
+  }
+  fit();
+  addEventListener('resize', fit);
+  addEventListener('orientationchange', fit);
+})();
+</script>
 <meta name="color-scheme" content="light dark">
 <meta name="theme-color" content="#f6f4ef" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#0b0b0c" media="(prefers-color-scheme: dark)">
@@ -49,7 +68,8 @@ main { max-width: 44rem; margin: 0 auto; padding: 28px 0 72px; }
 .top .name { font-weight: 600; letter-spacing: 0.01em; }
 a { color: inherit; text-decoration-thickness: 1px; text-underline-offset: 3px; }
 a:focus-visible, summary:focus-visible { outline: 2px solid var(--focus); outline-offset: 3px; border-radius: 3px; }
-h1 { font-size: clamp(2rem, 7vw, 2.75rem); line-height: 1.1; font-weight: 600; letter-spacing: -0.015em; margin: 0 0 12px; }
+/* --kz: skaleringen fra pc-modus-biten i <head> (1 uten). I «Side for datamaskiner» på en telefon zoomes siden, og da må vw deles på --kz for å bli det den var. */
+h1 { font-size: clamp(2rem, calc(7vw / var(--kz, 1)), 2.75rem); line-height: 1.1; font-weight: 600; letter-spacing: -0.015em; margin: 0 0 12px; }
 h2 { font-size: 1.3125rem; line-height: 1.25; font-weight: 600; margin: 2.6em 0 0.6em; letter-spacing: -0.005em; }
 h3 { font-size: 1.0625rem; line-height: 1.3; font-weight: 600; margin: 1.8em 0 0.4em; }
 p { margin: 0 0 1em; }
@@ -68,7 +88,9 @@ thead th { border-top: 0; border-bottom: 1px solid var(--line); color: var(--mut
 tbody th { font-weight: 600; width: 17%; }
 td.keys { width: 24%; }
 td:last-child { width: 19%; }
-@media (max-width: 40rem) {
+/* Tabellen stables på smale skjermer. Containerspørring, ikke media-spørring: i PC-modus på en telefon ser media-spørringen 980 px. Kroppen har 16 px luft på hver side, så 38 rem her er 40 rem i vinduet. */
+body { container-type: inline-size; container-name: pg; }
+@container pg (max-width: 38rem) {
   table, thead, tbody, tr, th, td { display: block; width: auto; }
   td.keys, td:last-child { width: auto; }
   thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
@@ -95,14 +117,14 @@ td:last-child { width: 19%; }
 </div>
 
 <h1>Leaderboard rules</h1>
-<p class="updated">Version 1 · Last updated: 20 October 2026</p>
+<p class="updated">Version 1 · Last updated: November 1, 2026</p>
 
 <section class="short" aria-labelledby="short">
   <h2 id="short">In short</h2>
   <ul>
     <li>The leaderboard is for friendly competition. Be kind, and play fair.</li>
     <li>Choose a name that is fine for anyone to read. It does not need to be your real name.</li>
-    <li>Solve by hand, on your own, in the app. No solvers, scripts or modified apps.</li>
+    <li>Solve by hand, on your own, in the app. No solvers, scripts, or modified apps.</li>
     <li>You can report a name or a time, and block a player, from any place on the list.</li>
     <li>You must be <strong>13 or older</strong> to join.</li>
   </ul>
@@ -114,14 +136,14 @@ td:last-child { width: 19%; }
 <h2>Your name</h2>
 <p>Your name is shown to everyone who opens the leaderboard, so it has to be fine for everyone, including children.</p>
 <ul>
-  <li><strong>What works:</strong> 3 to 16 characters: letters from the Latin alphabet (æ, ø, å and accents are fine), numbers, spaces, - _ and a full stop. A name can be made up. It does not need to be your real name.</li>
+  <li><strong>What works:</strong> 3 to 16 characters: letters from the Latin alphabet (æ, ø, å, and accents are fine), numbers, spaces, -, _, and a period. A name can be made up. It does not need to be your real name.</li>
   <li><strong>What does not:</strong>
     <ul>
-      <li>names that are hateful, bullying, sexual, violent or threatening, or that make fun of a person or a group</li>
+      <li>names that are hateful, bullying, sexual, violent, or threatening, or that make fun of a person or a group</li>
       <li>names that pretend to be someone else, such as another player, a well-known person, or Kubelo itself</li>
-      <li>names with personal information, like a full real name of someone else, a phone number or an address</li>
+      <li>names with personal information, like a full real name of someone else, a phone number, or an address</li>
       <li>names that advertise something, or that are links</li>
-      <li>names that look like another player's name, made with look-alike letters, numbers or symbols</li>
+      <li>names that look like another player's name, made with look-alike letters, numbers, or symbols</li>
     </ul>
   </li>
   <li>The app checks names automatically when you pick one. If a name is not accepted, the app only says "Please choose another name." so the check cannot be used to find out which words are on it.</li>
@@ -141,7 +163,8 @@ td:last-child { width: 19%; }
       <li>use more than one name to fill the list, or to make a name look better than it is</li>
     </ul>
   </li>
-  <li>Every posted solve comes with a replay that everyone can watch. Times that look impossible for a person are checked. The fastest times, under 15 seconds, appear on the all-time list only after a person has watched the replay.</li>
+  <li>Every posted solve is replayed and checked by our server. Once it is on a list, everyone can watch its replay.</li>
+  <li>Some times wait until a person has watched the replay: times that look impossible for a person, times that would reach the top three of all time, and all times under 15 seconds on the all-time list.</li>
   <li>The leaderboard gives honour and nothing else. There are no prizes and no money.</li>
 </ul>
 
@@ -149,7 +172,7 @@ td:last-child { width: 19%; }
 <ul>
   <li><strong>Report</strong> is on every place on the list. You pick one of three reasons: a rude or hurtful name, a time that looks impossible, or something else that breaks these rules. There is no free text.</li>
   <li><strong>Block</strong> hides a player's name on your phone. Their time stays on the list. Blocking is private: they are not told, and nothing is sent to the server.</li>
-  <li>A name is hidden automatically when several players have reported it. A time is never hidden automatically, so nobody can remove another player's place by reporting it.</li>
+  <li>A name is hidden automatically when three different players who have a time on the list have reported it. A time is never hidden automatically, so nobody can remove another player's place by reporting it.</li>
   <li>We look at reports and aim to answer within 48 hours.</li>
 </ul>
 
@@ -163,7 +186,7 @@ td:last-child { width: 19%; }
 <p>We keep a short log of what was done. If you think we got it wrong, write to us (see Contact), and we will look again.</p>
 
 <h2>Your data</h2>
-<p>The leaderboard keeps your name, your times and the moves of the solves you post. Everything we keep, why, for how long, and how to delete it is in the <a href="./privacy.html#leaderboard">privacy policy</a>. You can leave at any time with <strong>Leave the leaderboard</strong> in the app. If you cannot open the app, see <a href="./privacy.html#leaderboard-delete">how to delete your leaderboard data</a>.</p>
+<p>The leaderboard keeps your name, your times, and the moves of the solves you post. Everything we keep, why, for how long, and how to delete it is in the <a href="./privacy.html#leaderboard">privacy policy</a>. You can leave at any time with <strong>Leave the leaderboard</strong> in the app. If you cannot open the app, see <a href="./privacy.html#leaderboard-delete">how to delete your leaderboard data</a>.</p>
 
 <h2>Changes</h2>
 <p>If we change these rules, the version and the date at the top change, and the app asks you to accept the new version before you post again.</p>
