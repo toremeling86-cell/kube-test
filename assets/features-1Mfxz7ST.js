@@ -1,0 +1,1 @@
+import{r as e}from"./debug-CKJpNOfX.js";var t=t=>e(`nolearn`,t)===null,n=t=>e(`learn`,t)!==null;export{n,t};
