@@ -1,1 +1,0 @@
-import{Ut as e}from"./index-MQwQnwn7.js";import{r as t}from"./debug-CKJpNOfX.js";var n=()=>e()&&t(`size2`)!==null;export{n as t};
