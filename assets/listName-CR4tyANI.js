@@ -1,1 +1,0 @@
-import"./contract-DfVUIiPb.js";import{t as e}from"./board-ChGEmVv4.js";function t(e,t){return e===3&&t.linked&&t.serverSmart===!0?33:e}function n(t){return e(t===33?`league.size.smart`:t===2?`list.name.2`:`list.name.3`)}export{t as n,n as t};

@@ -1,1 +1,0 @@
-import{t as e}from"./cube-iSAOp81T.js";import{c as t}from"./notation-CaTfMHiJ.js";var n=`x2 y`;function r(){return new e(3).applyAll(t(n))}var i={video:!0};export{i as n,r,n as t};
